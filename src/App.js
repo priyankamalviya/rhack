@@ -1,5 +1,4 @@
-// eslint-disable-next-line
-/* eslint-disable */
+
 import React, { Component } from 'react';
 import './App.css';
 
@@ -21,19 +20,41 @@ const list = [
 ];
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state ={
+      list,
+    };
+
+    //bind onDismiss class method in the constructor
+    this.onDismiss = this.onDismiss.bind(this);
+  }
+
+  onDismiss(id){
+    function isNotId(item){
+      return item.objectID !== id;
+    }
+
+    const updatedList = this.state.list.filter(isNotId);
+  }
+
   render() {
     const hello = 'Welcome to React Hacker News App';
     return (
       <div className="App">
         <h1>Welcome to React Page</h1>
         {
-          list.map((item) =>
+          this.state.list.map(item =>
               <div key={item.objectID}>
               <span><a href={item.url} >{item.title}</a></span>
               <span>{item.author}</span>
               <span>{item.points}</span>
+              <span><button onClick={() => this.onDismiss(item.objectID)} type="button">Dismiss</button></span>
               </div>
         ) //map function ends
+
       }
       </div>
     );
