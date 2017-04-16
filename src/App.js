@@ -1,3 +1,5 @@
+// eslint-disable-next-line
+/* eslint-disable */
 import React, { Component } from 'react';
 import './App.css';
 
@@ -24,9 +26,15 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Welcome to React Page</h1>
-        {list.map(function(item){
-            return <p>{item.title}</p> ;
-          })}
+        {
+          list.map((item) =>
+              <div key={item.objectID}>
+              <span><a href={item.url} >{item.title}</a></span>
+              <span>{item.author}</span>
+              <span>{item.points}</span>
+              </div>
+        ) //map function ends
+      }
       </div>
     );
   }
