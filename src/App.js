@@ -37,10 +37,10 @@ class App extends Component {
   constructor(props){
     super(props);
 
-    this.state ={
-      list,
-      searchTerm: ''
-    };
+        this.state ={
+          list,
+          searchTerm: ''
+        };
 
     //bind onDismiss class method in the constructor
     this.onDismiss = this.onDismiss.bind(this);
@@ -65,27 +65,71 @@ class App extends Component {
 
 
   render() {
-    const hello = 'Welcome to React Hacker News App';
+
+    //object destructuring
+    const { list, searchTerm } = this.state;
     return (
       <div className="App">
-        <h1>Welcome to React Page</h1>
 
-        {/* define onChange callback function for the input field to hook synthetic event */}
-        <form><input type="text" onChange={this.onSearchChange}/></form>
-        {
-          this.state.list.filter(isSearched(this.state.searchTerm)).map(item =>
-              <div key={item.objectID}>
-              <span><a href={item.url} >{item.title}</a></span>
-              <span>{item.author}</span>
-              <span>{item.points}</span>
-              <span><button onClick={() => this.onDismiss(item.objectID)} type="button">Dismiss</button></span>
-              </div>
-        ) //map function ends
-
-      }
+        <Search
+        onChange={this.onSearchChange}
+        value={searchTerm} >Search</Search>
+        <Table
+        list={list}
+        pattern={searchTerm}
+        onDismiss={this.onDismiss}/>
       </div>
     );
   }
 }
 
+
+class Search extends Component{
+  render(){
+    const {value, onChange, children} = this.props;
+
+    return(
+      <form>
+      {children}
+      {/* define onChange callback function for the input field to hook synthetic event */}
+      <input type="text"
+      onChange={onChange}
+      value={value}/>
+      </form>
+    )
+  }
+}
+
+class Table extends Component {
+  render() {
+    const {list, pattern, onDismiss} = this.props;
+    return(
+      <div>
+      {
+        list.filter(isSearched(pattern)).map(item =>
+            <div key={item.objectID}>
+            <span><a href={item.url} >{item.title}</a></span>
+            <span>{item.author}</span>
+            <span>{item.points}</span>
+            <span><Button onClick={() => onDismiss(item.objectID)}>Dismiss</Button></span>
+            </div>
+      ) //map function ends
+    }
+      </div>
+    )
+  }
+}
+
+class Button extends Component{
+  render(){
+    const {
+      onClick,
+      className = '',
+      children} = this.props;
+
+    return(
+      <button onClick={onClick} className={className} type="button">{children}</button>
+    )
+  }
+}
 export default App;
