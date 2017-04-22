@@ -1,3 +1,7 @@
-{ "esversion":6 }
+{
+    "esnext": true,
+    "esversion":6
+}
+
 // eslint-disable-next-line
 /* eslint-disable */

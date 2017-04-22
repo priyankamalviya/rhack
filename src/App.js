@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import './App.css';
 
@@ -73,7 +72,9 @@ class App extends Component {
 
         <Search
         onChange={this.onSearchChange}
-        value={searchTerm} >Search</Search>
+        value={searchTerm}>
+        Search
+        </Search>
         <Table
         list={list}
         pattern={searchTerm}
@@ -84,21 +85,17 @@ class App extends Component {
 }
 
 
-class Search extends Component{
-  render(){
-    const {value, onChange, children} = this.props;
+const Search = ({value, onChange, children}) =>
+  //const {value, onChange, children} = props;
 
-    return(
-      <form>
-      {children}
-      {/* define onChange callback function for the input field to hook synthetic event */}
-      <input type="text"
-      onChange={onChange}
-      value={value}/>
-      </form>
-    )
-  }
-}
+<form>
+    {children}
+    <input type="text"
+    value = {value}
+    /* define onChange callback function for the input field to hook synthetic event */
+    onChange = {onChange}
+    />
+    </form>
 
 class Table extends Component {
   render() {
