@@ -68,13 +68,14 @@ class App extends Component {
     //object destructuring
     const { list, searchTerm } = this.state;
     return (
-      <div className="App">
-
+      <div className="page">
+        <div className="interactions">
         <Search
         onChange={this.onSearchChange}
         value={searchTerm}>
         Search
         </Search>
+        </div>
         <Table
         list={list}
         pattern={searchTerm}
@@ -97,7 +98,22 @@ const Search = ({value, onChange, children}) =>
     />
     </form>
 
-class Table extends Component {
+
+const Table = ({list, pattern, onDismiss} ) =>
+      <div className="table">
+      {
+        list.filter(isSearched(pattern)).map(item =>
+            <div key={item.objectID} className="table-row">
+            <span style={{ width: '40%' }}><a href={item.url} >{item.title}</a></span>
+            <span style={{ width: '30%' }}>{item.author}</span>
+            <span style={{ width: '10%' }}>{item.points}</span>
+            <span style={{ width: '10%' }}><Button onClick={() => onDismiss(item.objectID)} className="button-inline">Dismiss</Button></span>
+            </div>
+      ) //map function ends
+      }
+      </div>
+
+/*class Table extends Component {
   render() {
     const {list, pattern, onDismiss} = this.props;
     return(
@@ -116,8 +132,15 @@ class Table extends Component {
     )
   }
 }
+*/
 
-class Button extends Component{
+const Button = ({
+  onClick,
+  className = '',
+  children}) =>   <button onClick={onClick} className={className} type="button">{children}</button>
+
+
+/*class Button extends Component{
   render(){
     const {
       onClick,
@@ -128,5 +151,7 @@ class Button extends Component{
       <button onClick={onClick} className={className} type="button">{children}</button>
     )
   }
-}
+} */
+
+
 export default App;
