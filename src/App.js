@@ -1,32 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 
-const list = [
-  {
-    title: 'React',
-    url: 'https://facebook.github.io/react',
-    author: 'Jordan Walke',
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://facebook.github.io/reactjs/redux',
-    author: 'Dan Abramov',
-    points: 5,
-    objectID: 1,
-  }
-];
+const DEFAULT_QUERY = 'react';  // API will fetch redux related stories from hacker news , since it is set to default
 
-
-//define higher order function isSearched outside of class Component
-
-/* ES5
-function isSearched(searchTerm){
-  return function(item){
-    return !searchTerm || item.title.toLowerCase().includes(searchTerm);
-  }
-} */
+const PATH_BASE = 'https://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
 
 /*ES6*/
 const isSearched = (searchTerm) => (item) => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -37,15 +16,41 @@ class App extends Component {
     super(props);
 
         this.state ={
-          list,
-          searchTerm: ''
+          //list,
+          result: null,
+
+          searchTerm: DEFAULT_QUERY,
         };
+
+    //bind setSearchTopStories custom method in the constructor
+    this.setSearchTopStories = this.setSearchTopStories.bind(this);
+
+    //bind fetchSearchTopStories custom method in the constructor
+    this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
 
     //bind onDismiss class method in the constructor
     this.onDismiss = this.onDismiss.bind(this);
 
     //bind onSearchChange class method within the constructor
     this.onSearchChange = this.onSearchChange.bind(this);
+  }
+
+
+  setSearchTopStories(result){
+    this.setState({result});
+  }
+
+  // define the function that uses native fetch API to get data from hacker news API
+  fetchSearchTopStories(searchTerm){
+      fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+      .then(response => response.json())
+      .then(result => this.setSearchTopStories(result));
+  }
+
+  componentDidMount(){
+    const {searchTerm} = this.state;
+    //call the method that uses fetch API to pull data from hacker news API
+    this.fetchSearchTopStories(searchTerm);
   }
 
   onDismiss(id){
@@ -66,7 +71,10 @@ class App extends Component {
   render() {
 
     //object destructuring
-    const { list, searchTerm } = this.state;
+    const { searchTerm, result } = this.state;
+    console.log(this.state);
+
+    if(!result) {return null;}
     return (
       <div className="page">
         <div className="interactions">
@@ -77,7 +85,7 @@ class App extends Component {
         </Search>
         </div>
         <Table
-        list={list}
+        list={result.hits}
         pattern={searchTerm}
         onDismiss={this.onDismiss}/>
       </div>
@@ -92,9 +100,9 @@ const Search = ({value, onChange, children}) =>
 <form>
     {children}
     <input type="text"
-    value = {value}
+    value={value}
     /* define onChange callback function for the input field to hook synthetic event */
-    onChange = {onChange}
+    onChange={onChange}
     />
     </form>
 
