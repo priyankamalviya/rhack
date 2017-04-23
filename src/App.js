@@ -8,7 +8,7 @@ const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
 
 /*ES6*/
-const isSearched = (searchTerm) => (item) => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+//const isSearched = (searchTerm) => (item) => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
 
 class App extends Component {
 
@@ -28,6 +28,8 @@ class App extends Component {
     //bind fetchSearchTopStories custom method in the constructor
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
 
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);
+
     //bind onDismiss class method in the constructor
     this.onDismiss = this.onDismiss.bind(this);
 
@@ -35,6 +37,12 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
   }
 
+  onSearchSubmit(event){
+    const searchTerm = this.state;
+    this.fetchSearchTopStories(searchTerm);
+
+    event.preventDefault();
+  }
 
   setSearchTopStories(result){
     this.setState({result});
@@ -78,37 +86,43 @@ class App extends Component {
         <div className="interactions">
         <Search
         onChange={this.onSearchChange}
+        onSubmit={this.onSearchSubmit}
         value={searchTerm}>
         Search
         </Search>
         </div>
-        <Table
+        {
+          result?
+          <Table
         list={result.hits}
-        pattern={searchTerm}
         onDismiss={this.onDismiss}/>
+        : null
+      }
       </div>
     );
   }
 }
 
 
-const Search = ({value, onChange, children}) =>
+const Search = ({value, onChange, onSubmit, children}) =>
   //const {value, onChange, children} = props;
-
-<form>
+<form onSubmit={onSubmit}>
     {children}
     <input type="text"
     value={value}
     /* define onChange callback function for the input field to hook synthetic event */
     onChange={onChange}
     />
+    <button type="submit">
+    {children}
+    </button>
     </form>
 
 
-const Table = ({list, pattern, onDismiss} ) =>
+const Table = ({list, onDismiss} ) =>
       <div className="table">
       {
-        list.filter(isSearched(pattern)).map(item =>
+        list.map(item =>
             <div key={item.objectID} className="table-row">
             <span style={{ width: '40%' }}><a href={item.url} >{item.title}</a></span>
             <span style={{ width: '30%' }}>{item.author}</span>
