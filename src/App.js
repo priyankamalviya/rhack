@@ -21,8 +21,8 @@ class App extends Component {
 
         this.state ={
           //list,
-          result: null,
-
+          results: null,
+          searchKey:'',
           searchTerm: DEFAULT_QUERY,
         };
 
@@ -43,6 +43,7 @@ class App extends Component {
 
   onSearchSubmit(event){
     const searchTerm = this.state;
+    this.setState({searchKey: searchTerm});
     this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE);
 
     event.preventDefault();
@@ -50,11 +51,13 @@ class App extends Component {
 
   setSearchTopStories(result){
     const {hits, page} = result;
-
-    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const {searchKey, results} = this.state;
+    const oldHits = results && results[searchKey] ? results[searchKey].hits: [];
 
     const updatedHits = [...oldHits, ...hits]
-    this.setState({result : {hits:updatedHits, page}
+    this.setState({results : {
+      ...results,
+      [searchKey]: {hits:updatedHits, page}}
     });
   }
 
@@ -68,14 +71,21 @@ class App extends Component {
 
   componentDidMount(){
     const {searchTerm} = this.state;
+
+    this.setState({searchKey: searchTerm});
     //call the method that uses fetch API to pull data from hacker news API
     this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE);
   }
 
   onDismiss(id){
+    const {searchKey, results} = this.state;
+
+    const {hits, page} = results[searchKey];
+
     const isNotId = item => item.objectID !== id;
-      const updatedHits = this.state.result.hits.filter(isNotId);
-        this.setState({result: {...this.state.result, hits: updatedHits }
+      const updatedHits = hits.filter(isNotId);
+        this.setState({results: {...results,
+              [searchKey]:{hits: updatedHits, page }}
         });
   }
 
@@ -88,12 +98,14 @@ class App extends Component {
   render() {
 
     //object destructuring
-    const { searchTerm, result } = this.state;
+    const { searchTerm, results, searchKey } = this.state;
     //define a page variable that returns current page or starts with 0
-    const page = (result && result.page) || 0;
+    const page = (results && results[searchKey] &&results[searchKey].page) || 0;
+
+    const list = (results && results[searchKey] && results[searchKey].hits) || [];
     console.log(this.state);
 
-    if(!result) {return null;}
+    if(!results) {return null;}
     return (
       <div className="page">
         <div className="interactions">
@@ -104,16 +116,13 @@ class App extends Component {
         Search
         </Search>
         </div>
-        {
-          result?
           <Table
-        list={result.hits}
+          list={list}
         onDismiss={this.onDismiss}/>
-        : null
-      }
+
       <div className="interactions">
         <Button
-        onClick={() => this.fetchSearchTopStories(searchTerm, page+1)}>
+        onClick={() => this.fetchSearchTopStories(searchKey, page+1)}>
         More</Button>
       </div>
       </div>
