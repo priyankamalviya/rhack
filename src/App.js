@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './App.css';
 
 const DEFAULT_QUERY = 'react';  // API will fetch redux related stories from hacker news , since it is set to default
@@ -160,6 +161,11 @@ const Table = ({list, onDismiss} ) =>
       }
       </div>
 
+  Table.PropTypes {
+    list: PropTypes.array.isRequired,
+    onDismiss: PropTypes.func.isRequired,
+  };
+
 /*class Table extends Component {
   render() {
     const {list, pattern, onDismiss} = this.props;
@@ -186,6 +192,11 @@ const Button = ({
   className = '',
   children}) =>   <button onClick={onClick} className={className} type="button">{children}</button>
 
+Button.PropTypes = {
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+};
 
 /*class Button extends Component{
   render(){
