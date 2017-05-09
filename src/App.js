@@ -161,7 +161,7 @@ const Table = ({list, onDismiss} ) =>
       }
       </div>
 
-  Table.PropTypes {
+  Table.PropTypes = {
     list: PropTypes.array.isRequired,
     onDismiss: PropTypes.func.isRequired,
   };
@@ -213,3 +213,5 @@ Button.PropTypes = {
 
 
 export default App;
+
+export {Button, Search, Table};
