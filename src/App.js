@@ -4,7 +4,7 @@ import './App.css';
 
 const DEFAULT_QUERY = 'react';  // API will fetch redux related stories from hacker news , since it is set to default
 const DEFAULT_PAGE = 0;
-const DEFAULT_HPP=100;
+const DEFAULT_HPP=20;
 
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
@@ -25,6 +25,7 @@ class App extends Component {
           results: null,
           searchKey:'',
           searchTerm: DEFAULT_QUERY,
+          isLoading: false,
         };
 
     //bind setSearchTopStories custom method in the constructor
@@ -58,12 +59,14 @@ class App extends Component {
     const updatedHits = [...oldHits, ...hits]
     this.setState({results : {
       ...results,
-      [searchKey]: {hits:updatedHits, page}}
+      [searchKey]: {hits:updatedHits, page}},
+      isLoading: false
     });
   }
 
   // define the function that uses native fetch API to get data from hacker news API
   fetchSearchTopStories(searchTerm, page){
+    this.setState({isLoading: true});
       fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}
         &${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
@@ -99,7 +102,7 @@ class App extends Component {
   render() {
 
     //object destructuring
-    const { searchTerm, results, searchKey } = this.state;
+    const { searchTerm, results, searchKey, isLoading } = this.state;
     //define a page variable that returns current page or starts with 0
     const page = (results && results[searchKey] &&results[searchKey].page) || 0;
 
@@ -122,9 +125,12 @@ class App extends Component {
         onDismiss={this.onDismiss}/>
 
       <div className="interactions">
+      {
+        isLoading? <Loading />:
         <Button
         onClick={() => this.fetchSearchTopStories(searchKey, page+1)}>
         More</Button>
+      }
       </div>
       </div>
     );
@@ -132,21 +138,28 @@ class App extends Component {
 }
 
 
-/* const Search = ({value, onChange, onSubmit, children}) =>
+ const Search = ({value, onChange, onSubmit, children}) =>
   //const {value, onChange, children} = props;
-    <form onSubmit={onSubmit}>
-        {children}
-        <input type="text"
-        value={value}
-        /* define onChange callback function for the input field to hook synthetic event */
-        /*onChange={onChange}
-        />
-        <button type="submit">
-        {children}
-        </button>
-        </form> */
+  {
+    let input;
+    return (
+      <form onSubmit={onSubmit}>
+          {children}
+          <input type="text"
+          value={value}
+          /* define onChange callback function for the input field to hook synthetic event */
+          onChange={onChange}
+          ref={(node)=> input = node}
+          />
+          <button type="submit">
+          {children}
+          </button>
+          </form>
+    );
+  }
 
-class Search extends Component{
+
+/*class Search extends Component{
   componentDidMount(){
     this.input.focus();
   }
@@ -164,7 +177,7 @@ class Search extends Component{
           <input type="text"
           value={value}
           /* define onChange callback function for the input field to hook synthetic event */
-          onChange={onChange}
+        /*  onChange={onChange}
           ref={(node) => {this.input = node;}}
           />
           <button type="submit">
@@ -173,7 +186,7 @@ class Search extends Component{
           </form>
     );
   }
-}
+}*/
 
 
 const Table = ({list, onDismiss} ) =>
@@ -240,6 +253,11 @@ Button.PropTypes = {
   }
 } */
 
+
+/*Add a Loading component*/
+
+const Loading = () => <div><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+<span class="sr-only">Loading...</span></div>
 
 export default App;
 
