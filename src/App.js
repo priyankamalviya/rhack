@@ -132,19 +132,48 @@ class App extends Component {
 }
 
 
-const Search = ({value, onChange, onSubmit, children}) =>
+/* const Search = ({value, onChange, onSubmit, children}) =>
   //const {value, onChange, children} = props;
-<form onSubmit={onSubmit}>
-    {children}
-    <input type="text"
-    value={value}
-    /* define onChange callback function for the input field to hook synthetic event */
-    onChange={onChange}
-    />
-    <button type="submit">
-    {children}
-    </button>
-    </form>
+    <form onSubmit={onSubmit}>
+        {children}
+        <input type="text"
+        value={value}
+        /* define onChange callback function for the input field to hook synthetic event */
+        /*onChange={onChange}
+        />
+        <button type="submit">
+        {children}
+        </button>
+        </form> */
+
+class Search extends Component{
+  componentDidMount(){
+    this.input.focus();
+  }
+  render(){
+    const {
+      value,
+      onChange,
+      onSubmit,
+      children
+    } = this.props;
+
+    return(
+      <form onSubmit={onSubmit}>
+          {children}
+          <input type="text"
+          value={value}
+          /* define onChange callback function for the input field to hook synthetic event */
+          onChange={onChange}
+          ref={(node) => {this.input = node;}}
+          />
+          <button type="submit">
+          {children}
+          </button>
+          </form>
+    );
+  }
+}
 
 
 const Table = ({list, onDismiss} ) =>
