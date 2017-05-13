@@ -61,7 +61,12 @@ describe('Table', () => {
       {title: '1', author: '1', num_comments: '1', points:2, objectID:'y'},
       {title: '2', author: '2', num_comments: '2', points:2, objectID:'z'},
     ],
+    sortKey:'TITLE',
+    isSortReverse: false,
   };
+
+  /*Snapshot test using Jest*/
+
   it('renders', () => {
     const div = document.createElement('div');
     ReactDOM.render(<Table {...props}>This is test table</Table>, div);
