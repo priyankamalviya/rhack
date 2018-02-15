@@ -37,6 +37,4 @@ You can delete or rename the other files.
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-
-
-
+Live version of the site coming soon!
